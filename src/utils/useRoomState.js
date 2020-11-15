@@ -15,13 +15,13 @@ export const useRoomState = ({ room, setRoom }) => {
     // setTimeout(() => setMessage(''), 5000)
     // })
 
-    // setTimeout(() => {
-    //   room.onLeave(() => {
-    //     localStorage.removeItem(room.id)
-    //     setServerState({})
-    //     setRoom()
-    //   })
-    // }, 10000)
+    room.onLeave((code) => {
+      if (code === 1000) {
+        localStorage.removeItem(room.id)
+      }
+      setServerState({})
+      setRoom()
+    })
   }, [room, setRoom])
 
   return [serverState]
