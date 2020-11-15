@@ -62,32 +62,7 @@ export function OnlineRoom({ room, setRoom }) {
   return (
     <Flex className="container" variant="column">
       <Action onClick={() => room.leave()}>Leave</Action>
-
-      {roomState.phaseIndex === -1 ? (
-        <div>
-          {roomState.players.map((player) => (
-            <p
-              style={{
-                fontWeight:
-                  player.name === clientPlayer.name ? 'bold' : 'normal',
-              }}
-            >
-              {player.name}
-              {clientPlayer.isAdmin && player.id !== clientPlayer.id && (
-                <Action
-                  onClick={() => room.send('Leave', { playerId: player.id })}
-                >
-                  Kick
-                </Action>
-              )}
-            </p>
-          ))}
-          <p>{roomState.players.length}/8 Players</p>
-        </div>
-      ) : (
-        <p>{clientPlayer.name}</p>
-      )}
-
+      {roomState.phaseIndex > -1 && <p>{clientPlayer.name}</p>}
       {roomState.phaseIndex > -1 && (
         <div className="grid">
           {roomState.grid.map((tile) => {
@@ -108,7 +83,6 @@ export function OnlineRoom({ room, setRoom }) {
           })}
         </div>
       )}
-
       {clientPlayer.isAdmin &&
         (roomState.phaseIndex === 2 || roomState.phaseIndex === -1) && (
           <Action
@@ -118,7 +92,6 @@ export function OnlineRoom({ room, setRoom }) {
             Start
           </Action>
         )}
-
       {roomState.phaseIndex === 0 &&
         (clientPlayer.shipsToPlace.length > 0 ? (
           <div>
@@ -130,17 +103,35 @@ export function OnlineRoom({ room, setRoom }) {
         ) : (
           <p>Wait for the others to finish placing their ships</p>
         ))}
-
       {roomState.phaseIndex === 1 &&
         (clientPlayer.index === roomState.turnIndex ? (
           <span>Click a tile to shoot</span>
         ) : (
           <span>{activePlayer ? `${activePlayer.name} is shooting` : ''}</span>
         ))}
-
       {roomState.phaseIndex === 2 && (
         <span>Game over! {winningPlayer.name} wins</span>
       )}
+
+      <div>
+        {roomState.players.map((player) => (
+          <p
+            style={{
+              fontWeight: player.name === clientPlayer.name ? 'bold' : 'normal',
+            }}
+          >
+            {player.name} {player.connected ? '' : '(disconnected)'}
+            {clientPlayer.isAdmin && player.id !== clientPlayer.id && (
+              <Action
+                onClick={() => room.send('Leave', { playerId: player.id })}
+              >
+                Kick
+              </Action>
+            )}
+          </p>
+        ))}
+        <p>{roomState.players.length}/8 Players</p>
+      </div>
     </Flex>
   )
 }
