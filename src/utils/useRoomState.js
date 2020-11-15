@@ -27,7 +27,7 @@ export const useRoomState = ({ room, setRoom }) => {
         setServerState({})
         setRoom()
       })
-    }, 3500)
+    }, 10000)
   }, [room, setRoom])
 
   return [serverState]
