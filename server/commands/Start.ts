@@ -23,20 +23,14 @@ export class StartCommand extends Command<RoomState, { playerId: string }> {
     )
     this.state.phaseIndex = 0
     this.state.players.forEach((player, index) => {
-      // player.shipsToPlace = [5, 4, 3, 2, 1]
-      player.shipsToPlace = [1]
+      player.shipsToPlace = [5, 4, 3, 2, 1]
+      // player.shipsToPlace = [1]
       player.chunkIndex = chunkIndexes[index]
       player.index = player.chunkIndex
     })
 
     this.state.turnIndex = -1
-    do {
-      this.state.turnIndex = (this.state.turnIndex + 1) % 9
-    } while (
-      !this.state.players.some(
-        (p) => p.index > -1 && p.chunkIndex === this.state.turnIndex,
-      )
-    )
+    this.state.nextTurn()
   }
 }
 

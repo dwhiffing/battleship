@@ -16,6 +16,9 @@ export class Player extends Schema {
   index = -1
 
   @type('number')
+  ammo = -1
+
+  @type('number')
   chunkIndex = -1
 
   @type('boolean')

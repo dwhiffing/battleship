@@ -34,4 +34,15 @@ export class RoomState extends Schema {
     this.turnIndex = 0
     this.phaseIndex = -1
   }
+
+  nextTurn() {
+    do {
+      this.turnIndex = (this.turnIndex + 1) % 9
+    } while (
+      !this.players.some((p) => p.index > -1 && p.chunkIndex === this.turnIndex)
+    )
+
+    const player = this.players.find((p) => p.chunkIndex === this.turnIndex)
+    player.ammo = 5
+  }
 }

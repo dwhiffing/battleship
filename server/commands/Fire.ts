@@ -20,6 +20,7 @@ export class FireCommand extends Command<
 
   execute({ playerId, index }) {
     const player = this.state.players.find((p) => p.id === playerId)
+    player.ammo -= 1
 
     const tile = this.state.grid[index]
     tile.value = tile.value === 1 ? 2 : 3
@@ -38,12 +39,8 @@ export class FireCommand extends Command<
       return
     }
 
-    do {
-      this.state.turnIndex = (this.state.turnIndex + 1) % 9
-    } while (
-      !this.state.players.find(
-        (p) => p.index > -1 && p.chunkIndex === this.state.turnIndex,
-      )
-    )
+    if (player.ammo === 0) {
+      this.state.nextTurn()
+    }
   }
 }
