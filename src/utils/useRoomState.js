@@ -5,7 +5,7 @@ export const useRoomState = ({ room, setRoom }) => {
 
   useEffect(() => {
     if (!room) return
-
+    setServerState(room.state.toJSON())
     room.onStateChange((state) => {
       if (!state.players.toJSON().some((p) => p.id === room.sessionId)) {
         room.leave()
@@ -20,11 +20,14 @@ export const useRoomState = ({ room, setRoom }) => {
     // setMessage(opts)
     // setTimeout(() => setMessage(''), 5000)
     // })
-    room.onLeave(() => {
-      localStorage.removeItem(room.id)
-      setServerState({})
-      setRoom()
-    })
+
+    setTimeout(() => {
+      room.onLeave(() => {
+        localStorage.removeItem(room.id)
+        setServerState({})
+        setRoom()
+      })
+    }, 3500)
   }, [room, setRoom])
 
   return [serverState]
