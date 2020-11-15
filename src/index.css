@@ -1,0 +1,43 @@
+body {
+  margin: 0 5px;
+  position: relative;
+}
+
+.tile {
+  flex: 1 0 10%;
+  position: relative;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+}
+
+.tile:before {
+  content: '';
+  display: block;
+  padding-bottom: 100%;
+}
+
+.tile > div {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+div.tile:hover:before {
+  background-color: #ffa;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+}
