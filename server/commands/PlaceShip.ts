@@ -36,7 +36,15 @@ export class PlaceShipCommand extends Command<
 
     if (this.state.players.every((p) => p.shipsToPlace.length === 0)) {
       this.state.phaseIndex = 1
-      this.state.turnIndex = 0
+
+      this.state.turnIndex = -1
+      do {
+        this.state.turnIndex = (this.state.turnIndex + 1) % 9
+      } while (
+        !this.state.players.some(
+          (p) => p.index > -1 && p.chunkIndex === this.state.turnIndex,
+        )
+      )
     }
   }
 }

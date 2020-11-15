@@ -3,11 +3,11 @@ import { Player } from './Player'
 import * as battleship from './../../lib/battleship'
 
 export class Tile extends Schema {
-  @type("number")
-  index: number;
+  @type('number')
+  index: number
 
-  @type("number")
-  value: number;
+  @type('number')
+  value: number
 
   constructor({ index, value }) {
     super()
@@ -17,24 +17,21 @@ export class Tile extends Schema {
 }
 
 export class RoomState extends Schema {
+  @type('number')
+  turnIndex: number
 
-  @type("number")
-  turnIndex: number;
-
-  @type("number")
-  phaseIndex: number;
+  @type('number')
+  phaseIndex: number
 
   @type([Player])
-  players = new ArraySchema<Player>();
+  players = new ArraySchema<Player>()
 
   @type([Tile])
-  grid = new ArraySchema<Tile>();
-  
+  grid = new ArraySchema<Tile>()
+
   constructor() {
     super()
-    this.turnIndex = 0;
-    this.phaseIndex = -1;
-    const grid = battleship.getInitialGrid();
-    grid.forEach(g => this.grid.push(new Tile(g)));
+    this.turnIndex = 0
+    this.phaseIndex = -1
   }
 }

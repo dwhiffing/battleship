@@ -109,14 +109,15 @@ export function OnlineRoom({ room, setRoom }) {
         </div>
       )}
 
-      {clientPlayer.isAdmin && roomState.phaseIndex === -1 && (
-        <Action
-          disabled={roomState.players.length < 2}
-          onClick={() => room.send('Start')}
-        >
-          Start
-        </Action>
-      )}
+      {clientPlayer.isAdmin &&
+        (roomState.phaseIndex === 2 || roomState.phaseIndex === -1) && (
+          <Action
+            disabled={roomState.players.length < 2}
+            onClick={() => room.send('Start')}
+          >
+            Start
+          </Action>
+        )}
 
       {roomState.phaseIndex === 0 &&
         (clientPlayer.shipsToPlace.length > 0 ? (
