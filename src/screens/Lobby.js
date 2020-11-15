@@ -117,6 +117,7 @@ const RoomListItem = ({ room, onClick }) => (
 const joinRoomWithReconnect = async (roomId, name) => {
   let room,
     sessionId = localStorage.getItem(roomId)
+  window.alert(`${roomId}, ${sessionId}`)
 
   if (sessionId) {
     try {
