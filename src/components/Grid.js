@@ -3,64 +3,63 @@ import {
   config,
   getCoords,
   getChunkIndex,
-  getIsPartOfShip,
+  getIsShipValid,
 } from '../../lib/battleship'
 
-export const Grid = (props) => (
-  <div className="grid">
-    {props.grid.map((tile) => {
-      const player = props.clientPlayer
-      const third = Math.floor(config.size / 3)
-      const { x, y } = getCoords(tile.index)
-      const chunkIndex = getChunkIndex(tile.index)
-      let background = null
+export const Grid = (props) => {
+  const filterBorders = (t, i, arr) =>
+    props.rotationIndex === 1 || getCoords(t).y === getCoords(arr[0]).y
 
-      if (chunkIndex === player.chunkIndex) {
-        background = '#ffc' // highlight our chunk
-      }
+  return (
+    <div className="grid">
+      {props.grid.map((tile) => {
+        const player = props.clientPlayer
+        const third = Math.floor(config.size / 3)
+        const { x, y } = getCoords(tile.index)
+        const chunk = getChunkIndex(tile.index)
+        let background = null
 
-      if (props.preview.some((t) => t === tile.index)) {
-        background = 'black' // highlight preview
-      }
+        // highlight our chunk
+        if (chunk === player.chunkIndex) background = '#ffc'
 
-      if (
-        (chunkIndex === player.chunkIndex || props.phaseIndex === 2) &&
-        tile.value === 1
-      ) {
-        background = 'gray' // show player ships
-      }
+        // highlight preview
+        const isPlace = tile.index === props.placeIndex
+        const isPreview = props.preview
+          .filter(filterBorders)
+          .some((t) => t === tile.index)
+        if (isPlace || isPreview) background = 'black'
 
-      if (tile.value === 2) {
-        background = '#f00' // hit
-      }
+        // show player ships
+        const showShip = chunk === player.chunkIndex || props.phaseIndex === 2
+        if (showShip && tile.value === 1) background = 'gray'
 
-      if (tile.value === 3) {
-        background = '#00f' // miss
-      }
+        if (tile.value === 2) background = '#f00' // hit
 
-      if (props.ship && props.ship.some((s) => s.index === tile.index)) {
-        background = getIsPartOfShip({ ...props, index: tile.index })
-          ? '#ccc'
-          : 'red'
-      }
+        if (tile.value === 3) background = '#00f' // miss
 
-      return (
-        <div
-          key={tile.index}
-          className="tile"
-          onClick={() => props.onClickTile({ tile })}
-          onMouseEnter={() => props.onHoverTile({ tile })}
-          style={{
-            flex: `1 0 ${100 / config.size}%`,
-            borderTop: y === 0 ? '1px solid #000' : null,
-            borderLeft: x === 0 ? '1px solid #000' : null,
-            borderRight: x % third === third - 1 ? '1px solid #000' : null,
-            borderBottom: y % third === third - 1 ? '1px solid #000' : null,
-          }}
-        >
-          <div style={{ width: '100%', height: '100%', background }} />
-        </div>
-      )
-    })}
-  </div>
-)
+        if (props.ship.filter(filterBorders).some((s) => s === tile.index))
+          background = getIsShipValid({ ...props, index: tile.index })
+            ? '#ccc'
+            : 'red'
+
+        return (
+          <div
+            key={tile.index}
+            className="tile"
+            onClick={() => props.onClickTile({ tile })}
+            onMouseEnter={() => props.onHoverTile({ tile })}
+            style={{
+              flex: `1 0 ${100 / config.size}%`,
+              borderTop: y === 0 ? '1px solid #000' : null,
+              borderLeft: x === 0 ? '1px solid #000' : null,
+              borderRight: x % third === third - 1 ? '1px solid #000' : null,
+              borderBottom: y % third === third - 1 ? '1px solid #000' : null,
+            }}
+          >
+            <div style={{ width: '100%', height: '100%', background }} />
+          </div>
+        )
+      })}
+    </div>
+  )
+}

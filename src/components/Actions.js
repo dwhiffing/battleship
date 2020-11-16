@@ -2,9 +2,67 @@ import React from 'react'
 import { Action } from '../components/Action'
 import * as battleship from '../../lib/battleship'
 
-export const Actions = (props) => {
+export const Actions = (props) => (
+  <>
+    {props.phaseIndex === -1 && <LobbyActions {...props} />}
+    {props.phaseIndex === 0 && <PlaceActions {...props} />}
+    {props.phaseIndex === 1 && <ShootActions {...props} />}
+    {props.phaseIndex === 2 && <EndActions {...props} />}
+  </>
+)
+
+const LobbyActions = (props) => (
+  <>
+    {props.clientPlayer.isAdmin && (
+      <Action
+        disabled={props.players.length < 2}
+        onClick={() => props.room.send('Start')}
+      >
+        Start
+      </Action>
+    )}
+  </>
+)
+
+const PlaceActions = (props) => (
+  <>
+    {props.clientPlayer.shipsToPlace.length > 0 ? (
+      <>
+        <Action onClick={props.onRotate}>Rotate</Action>
+        <Action onClick={props.onPlace}>Place</Action>
+        <p>Place your remaining ships</p>
+      </>
+    ) : (
+      <p>Wait for the others to finish placing their ships</p>
+    )}
+  </>
+)
+
+const ShootActions = (props) => {
   const activePlayer = props.players.find((p) => p.index === props.turnIndex)
+
+  return (
+    <>
+      {props.clientPlayer.index === props.turnIndex ? (
+        <>
+          {typeof props.placeIndex === 'number' ? (
+            <Action onClick={props.onFire}>
+              Fire ({props.clientPlayer.ammo})
+            </Action>
+          ) : (
+            <span>Click a tile to shoot</span>
+          )}
+        </>
+      ) : (
+        <span>{activePlayer ? `${activePlayer.name} is shooting` : ''}</span>
+      )}
+    </>
+  )
+}
+
+const EndActions = (props) => {
   let winningPlayer
+
   if (props.phaseIndex === 2) {
     winningPlayer = props.players.find((p) =>
       battleship.getActiveChunks({ grid: props.grid }).includes(p.chunkIndex),
@@ -12,62 +70,15 @@ export const Actions = (props) => {
   }
 
   return (
-    <>
-      {props.phaseIndex === -1 && (
-        <>
-          {props.clientPlayer.isAdmin && (
-            <Action
-              disabled={props.players.length < 2}
-              onClick={() => props.room.send('Start')}
-            >
-              Start
-            </Action>
-          )}
-        </>
-      )}
-
-      {props.phaseIndex === 0 && (
-        <>
-          {props.clientPlayer.shipsToPlace.length > 0 ? (
-            <>
-              <Action onClick={props.onRotate}>Rotate</Action>
-              <Action onClick={props.onPlace}>Place</Action>
-              <p>Place your remaining ships</p>
-            </>
-          ) : (
-            <p>Wait for the others to finish placing their ships</p>
-          )}
-        </>
-      )}
-
-      {props.phaseIndex === 1 && (
-        <>
-          {props.clientPlayer.index === props.turnIndex ? (
-            <>
-              {typeof props.placeIndex === 'number' ? (
-                <Action onClick={props.onFire}>Fire</Action>
-              ) : (
-                <span>Click a tile to shoot</span>
-              )}
-            </>
-          ) : (
-            <span>
-              {activePlayer ? `${activePlayer.name} is shooting` : ''}
-            </span>
-          )}
-        </>
-      )}
-
-      {props.phaseIndex === 2 && winningPlayer && (
-        <>
-          <span>Game over! {winningPlayer.name} wins</span>
-          {props.clientPlayer.isAdmin && (
-            <Action disabled={props.players.length < 2} onClick={props.onStart}>
-              Start
-            </Action>
-          )}
-        </>
-      )}
-    </>
+    winningPlayer && (
+      <>
+        <span>Game over! {winningPlayer.name} wins</span>
+        {props.clientPlayer.isAdmin && (
+          <Action disabled={props.players.length < 2} onClick={props.onStart}>
+            Start
+          </Action>
+        )}
+      </>
+    )
   )
 }

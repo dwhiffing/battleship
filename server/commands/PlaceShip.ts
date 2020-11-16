@@ -22,7 +22,7 @@ export class PlaceShipCommand extends Command<
       player.shipsToPlace.length > 0 &&
       battleship.getChunkIndex(placeIndex) === chunkIndex &&
       !battleship.getIsBlocked({ ship, rotationIndex, grid }) &&
-      battleship.getInFrame({ ship, rotationIndex })
+      battleship.getInChunk({ ship, rotationIndex })
     )
   }
 

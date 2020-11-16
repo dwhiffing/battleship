@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { config, getShip, getCoords } from '../../lib/battleship'
+import { getShip } from '../../lib/battleship'
 import * as battleship from '../../lib/battleship'
 
 export const useRoomState = ({ room, setRoom }) => {
   const [rotationIndex, setRotationIndex] = useState(0)
   const [showNames, setShowNames] = useState(false)
-  const [hoveredTile, hoverTile] = useState({ index: 0, value: 0 })
-  const [placeIndex, setPlaceIndex] = useState({ index: 0, value: 0 })
+  const [hoveredTile, hoverTile] = useState(-99)
+  const [placeIndex, setPlaceIndex] = useState(-99)
   const [serverState, setServerState] = useState(room.state.toJSON())
 
   useEffect(() => {
@@ -31,28 +31,14 @@ export const useRoomState = ({ room, setRoom }) => {
   const clientPlayer =
     (serverState.players || []).find((p) => p.id === room.sessionId) || {}
 
-  let ship = []
-  if (
-    clientPlayer.shipsToPlace &&
-    clientPlayer.shipsToPlace.length > 0 &&
-    hoveredTile
-  ) {
-    ship = getShip({ index: hoveredTile.index, rotationIndex, clientPlayer })
-  }
-
-  let preview = []
-  if (typeof placeIndex === 'number') {
-    preview = new Array(clientPlayer.shipsToPlace[0])
-      .fill(0)
-      .map((s, i) => placeIndex + (rotationIndex === 1 ? i * config.size : i))
-      .filter(
-        (t, i, arr) =>
-          rotationIndex === 1 || getCoords(t).y === getCoords(arr[0]).y,
-      )
-  }
-
+  const ship = getShip({ index: hoveredTile, rotationIndex, clientPlayer })
+  const preview = getShip({ index: placeIndex, rotationIndex, clientPlayer })
   const data = {
     ...serverState,
+    room,
+    ship,
+    preview,
+    clientPlayer,
     rotationIndex,
     setRotationIndex,
     showNames,
@@ -61,10 +47,6 @@ export const useRoomState = ({ room, setRoom }) => {
     hoverTile,
     placeIndex,
     setPlaceIndex,
-    room,
-    clientPlayer,
-    ship,
-    preview,
   }
 
   const onLeave = () => room.leave()
@@ -72,32 +54,24 @@ export const useRoomState = ({ room, setRoom }) => {
   const onStart = () => room.send('Start')
   const onList = () => data.setShowNames(!data.showNames)
   const onFire = () => room.send('Fire', { index: data.placeIndex })
-  const onPlace = () => {
-    room.send('PlaceShip', data)
-    data.setPlaceIndex()
-  }
   const onRotate = () => setRotationIndex((i) => (i + 1) % 2)
-  const onHoverTile = ({ tile }) => data.hoverTile(tile)
+  const onHoverTile = ({ tile }) => data.hoverTile(tile.index)
+  const onPlace = () => {
+    data.setPlaceIndex()
+    room.send('PlaceShip', data)
+  }
   const onClickTile = ({ tile }) => {
     const { phaseIndex, clientPlayer, setPlaceIndex } = data
-    if (phaseIndex === 0) {
-      if (battleship.getIsPartOfShip({ ...data, index: tile.index }))
-        setPlaceIndex(tile.index)
-    } else if (
-      phaseIndex === 1 &&
-      battleship.getChunkIndex(tile.index) !== clientPlayer.chunkIndex
+    if (
+      (phaseIndex === 0 &&
+        battleship.getIsShipValid({ ...data, index: tile.index })) ||
+      (phaseIndex === 1 &&
+        battleship.getChunkIndex(tile.index) !== clientPlayer.chunkIndex)
     ) {
       setPlaceIndex(tile.index)
     }
   }
 
-  const listeners = {
-    onLeave,
-    onList,
-    onRotate,
-    onStart,
-    onFire,
-    onPlace,
-  }
+  const listeners = { onLeave, onList, onRotate, onStart, onFire, onPlace }
   return { ...data, ...listeners, onHoverTile, onClickTile, onKick }
 }
