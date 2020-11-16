@@ -4,32 +4,37 @@ import * as battleship from '../../lib/battleship'
 
 export class PlaceShipCommand extends Command<
   RoomState,
-  { playerId: string; index: number; rotationIndex: number }
+  { playerId: string; placeIndex: number; rotationIndex: number }
 > {
-  validate({ playerId, index, rotationIndex }) {
+  validate({ playerId, placeIndex, rotationIndex }) {
     const player = this.state.players.find((p) => p.id === playerId)
     const chunkIndex = player.chunkIndex
-    const shipLength = player.shipsToPlace[0]
+    const ship = battleship.getShip({
+      index: placeIndex,
+      clientPlayer: player,
+      rotationIndex,
+    })
     const grid = this.state.grid
 
     return (
       this.state.phaseIndex === 0 &&
       player &&
       player.shipsToPlace.length > 0 &&
-      battleship.getChunkIndex(index) === chunkIndex &&
-      !battleship.getIsBlocked({ index, rotationIndex, shipLength, grid }) &&
-      battleship.getInFrame({ index, rotationIndex, shipLength })
+      battleship.getChunkIndex(placeIndex) === chunkIndex &&
+      !battleship.getIsBlocked({ ship, rotationIndex, grid }) &&
+      battleship.getInFrame({ ship, rotationIndex })
     )
   }
 
-  execute({ playerId, index, rotationIndex }) {
+  execute({ playerId, placeIndex, rotationIndex }) {
     const player = this.state.players.find((p) => p.id === playerId)
     const shipLength = player.shipsToPlace.shift()
     for (let i = 0; i < shipLength; i++) {
       this.state.grid[
-        index + (rotationIndex === 1 ? i * battleship.config.size : i)
+        placeIndex + (rotationIndex === 1 ? i * battleship.config.size : i)
       ] = new Tile({
-        index: index + (rotationIndex === 1 ? i * battleship.config.size : i),
+        index:
+          placeIndex + (rotationIndex === 1 ? i * battleship.config.size : i),
         value: 1,
       })
     }

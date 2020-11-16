@@ -18,6 +18,10 @@ export const Flex = ({
     style.justifyContent = 'space-between'
   }
 
+  if (/justify-end/.test(variant)) {
+    style.justifyContent = 'flex-end'
+  }
+
   if (/align-center/.test(variant)) {
     style.alignItems = 'center'
   } else if (/justify-center/.test(variant)) {
