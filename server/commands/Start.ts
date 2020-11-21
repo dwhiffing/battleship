@@ -31,6 +31,7 @@ export class StartCommand extends Command<
     this.state.players.forEach((player, index) => {
       player.shipsToPlace = battleship.config.ships
       player.chunkIndex = chunkIndexes[index]
+      player.isDead = false
       player.index = player.chunkIndex
     })
 

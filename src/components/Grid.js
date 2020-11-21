@@ -22,13 +22,6 @@ export const Grid = (props) => {
         // highlight our chunk
         if (chunk === player.chunkIndex) background = '#ffc'
 
-        // highlight preview
-        const isPlace = tile.index === props.placeIndex
-        const isPreview = props.preview
-          .filter(filterBorders)
-          .some((t) => t === tile.index)
-        if (isPlace || isPreview) background = 'black'
-
         // show player ships
         const showShip = chunk === player.chunkIndex || props.phaseIndex === 2
         if (showShip && tile.value === 1) background = 'gray'
@@ -41,6 +34,16 @@ export const Grid = (props) => {
           background = getIsShipValid({ ...props, index: tile.index })
             ? '#ccc'
             : 'red'
+
+        if (props.players.some((p) => p.chunkIndex === chunk && p.isDead))
+          background = '#f99'
+
+        // highlight preview
+        const isPlace = tile.index === props.placeIndex
+        const isPreview = props.preview
+          .filter(filterBorders)
+          .some((t) => t === tile.index)
+        if (isPlace || isPreview) background = 'black'
 
         return (
           <div

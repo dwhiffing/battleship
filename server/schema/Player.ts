@@ -25,6 +25,9 @@ export class Player extends Schema {
   connected = true
 
   @type('boolean')
+  isDead = false
+
+  @type('boolean')
   isAdmin = false
 
   @type('number')

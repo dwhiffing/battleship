@@ -28,9 +28,7 @@ export class FireCommand extends Command<
     // only keep players with ship parts left
     const activeChunks = battleship.getActiveChunks({ grid: this.state.grid })
     this.state.players.forEach((player) => {
-      player.index = activeChunks.includes(player.chunkIndex)
-        ? player.chunkIndex
-        : -1
+      player.isDead = !activeChunks.includes(player.chunkIndex)
     })
 
     if (activeChunks.length < 2) {
