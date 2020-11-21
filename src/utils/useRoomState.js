@@ -3,7 +3,7 @@ import { getShip } from '../../lib/battleship'
 import * as battleship from '../../lib/battleship'
 
 export const useRoomState = ({ room, setRoom }) => {
-  const [config, setConfig] = useState({ size: 18, ships: [3, 2, 1] })
+  const [config, setConfig] = useState({ size: 18, ships: [3, 2, 1], shots: 5 })
   const [rotationIndex, setRotationIndex] = useState(0)
   const [showNames, setShowNames] = useState(false)
   const [hoveredTile, hoverTile] = useState(-99)
@@ -59,15 +59,19 @@ export const useRoomState = ({ room, setRoom }) => {
   const onSetConfig = () => {
     const _size = prompt('Board Size?')
     const _ships = prompt('Ships?')
+    const _shots = prompt('Shots?')
     const size = +_size
+    const shots = +_shots
     const ships = _ships.split(' ').map((s) => +s)
     if (
       size % 3 === 0 &&
       size >= 9 &&
+      Number.isInteger(shots) &&
+      shots > 0 &&
       Array.isArray(ships) &&
       ships.every((s) => Number.isInteger(s) && s <= size / 3)
     ) {
-      setConfig({ size, ships })
+      setConfig({ size, ships, shots })
     }
   }
   const onList =

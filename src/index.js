@@ -18,3 +18,7 @@ function App() {
 }
 
 ReactDOM.render(<App />, document.getElementById('root'))
+
+// TODO: add powerups to center square
+// TODO: indicate that player square is inactive because all their ships are sunk
+// TODO: config for num shots per round

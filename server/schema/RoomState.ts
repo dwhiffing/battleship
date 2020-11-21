@@ -60,6 +60,6 @@ export class RoomState extends Schema {
     )
 
     const player = this.players.find((p) => p.chunkIndex === this.turnIndex)
-    player.ammo = 5
+    player.ammo = battleship.config.shots
   }
 }

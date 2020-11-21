@@ -21,6 +21,7 @@ const LobbyActions = (props) => (
         <p>Board Size: {props.config.size}</p>
         <p>Cell Size: {props.config.size / 3}</p>
         <p>Ship Sizes: {props.config.ships.join(', ')}</p>
+        <p>Shots per round: {props.config.shots}</p>
         <Action onClick={props.onSetConfig}>Set Config</Action>
       </>
     )}
