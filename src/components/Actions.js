@@ -14,12 +14,15 @@ export const Actions = (props) => (
 const LobbyActions = (props) => (
   <>
     {props.clientPlayer.isAdmin && (
-      <Action
-        disabled={props.players.length < 2}
-        onClick={() => props.room.send('Start')}
-      >
-        Start
-      </Action>
+      <>
+        <Action disabled={props.players.length < 2} onClick={props.onStart}>
+          Start
+        </Action>
+        <p>Board Size: {props.config.size}</p>
+        <p>Cell Size: {props.config.size / 3}</p>
+        <p>Ship Sizes: {props.config.ships.join(', ')}</p>
+        <Action onClick={props.onSetConfig}>Set Config</Action>
+      </>
     )}
   </>
 )

@@ -2,6 +2,20 @@ import { type, Schema, ArraySchema } from '@colyseus/schema'
 import { Player } from './Player'
 import * as battleship from './../../lib/battleship'
 
+export class Config extends Schema {
+  @type('number')
+  size: number
+
+  @type(['number'])
+  ships = new ArraySchema<Number>()
+
+  constructor({ size, ships }) {
+    super()
+    this.size = size
+    this.ships = ships
+  }
+}
+
 export class Tile extends Schema {
   @type('number')
   index: number
@@ -22,6 +36,9 @@ export class RoomState extends Schema {
 
   @type('number')
   phaseIndex: number
+
+  @type(Config)
+  config
 
   @type([Player])
   players = new ArraySchema<Player>()

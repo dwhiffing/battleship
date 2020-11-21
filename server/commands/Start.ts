@@ -1,19 +1,25 @@
 import { Command } from '@colyseus/command'
-import { Player, RoomState, Tile } from '../schema'
+import { RoomState, Tile } from '../schema'
 import * as battleship from '../../lib/battleship'
 import { ArraySchema } from '@colyseus/schema'
+import { Config } from '../schema/RoomState'
 
-export class StartCommand extends Command<RoomState, { playerId: string }> {
-  validate({ playerId, name }) {
+export class StartCommand extends Command<
+  RoomState,
+  { playerId: string; config: any }
+> {
+  validate({ playerId, config }) {
     return (
       (this.state.phaseIndex === -1 || this.state.phaseIndex === 2) &&
       this.state.players.length > 1
     )
   }
 
-  execute() {
+  execute({ config }) {
     this.state.phaseIndex = -1
     this.state.grid = new ArraySchema<Tile>()
+    battleship.setConfig(config)
+    this.state.config = new Config(config)
     const grid = battleship.getInitialGrid()
     grid.forEach((g) => this.state.grid.push(new Tile(g)))
 
@@ -23,8 +29,7 @@ export class StartCommand extends Command<RoomState, { playerId: string }> {
     )
     this.state.phaseIndex = 0
     this.state.players.forEach((player, index) => {
-      player.shipsToPlace = [5, 4, 3, 2, 1]
-      // player.shipsToPlace = [1]
+      player.shipsToPlace = battleship.config.ships
       player.chunkIndex = chunkIndexes[index]
       player.index = player.chunkIndex
     })

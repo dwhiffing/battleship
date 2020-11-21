@@ -3,6 +3,7 @@ import { getShip } from '../../lib/battleship'
 import * as battleship from '../../lib/battleship'
 
 export const useRoomState = ({ room, setRoom }) => {
+  const [config, setConfig] = useState({ size: 18, ships: [3, 2, 1] })
   const [rotationIndex, setRotationIndex] = useState(0)
   const [showNames, setShowNames] = useState(false)
   const [hoveredTile, hoverTile] = useState(-99)
@@ -13,6 +14,7 @@ export const useRoomState = ({ room, setRoom }) => {
     if (!room) return
     setServerState(room.state.toJSON())
     room.onStateChange((state) => {
+      state.toJSON().config && battleship.setConfig(state.toJSON().config)
       setServerState(state.toJSON())
     })
 
@@ -35,6 +37,7 @@ export const useRoomState = ({ room, setRoom }) => {
   const preview = getShip({ index: placeIndex, rotationIndex, clientPlayer })
   const data = {
     ...serverState,
+    config,
     room,
     ship,
     preview,
@@ -51,6 +54,23 @@ export const useRoomState = ({ room, setRoom }) => {
 
   const onLeave = () => room.leave()
   const onKick = (player) => room.send('Leave', { playerId: player.id })
+  const onStart = () => {
+    room.send('Start', { config })
+  }
+  const onSetConfig = () => {
+    const _size = prompt('Board Size?')
+    const _ships = prompt('Ships?')
+    const size = +_size
+    const ships = _ships.split(' ').map((s) => +s)
+    if (
+      size % 3 === 0 &&
+      size >= 9 &&
+      Array.isArray(ships) &&
+      ships.every((s) => Number.isInteger(s) && s <= size / 3)
+    ) {
+      setConfig({ size, ships })
+    }
+  }
   const onList =
     data.phaseIndex > -1 ? () => data.setShowNames(!data.showNames) : null
   const onFire = () => room.send('Fire', { index: data.placeIndex })
@@ -72,6 +92,14 @@ export const useRoomState = ({ room, setRoom }) => {
     }
   }
 
-  const listeners = { onLeave, onList, onRotate, onStart, onFire, onPlace }
+  const listeners = {
+    onLeave,
+    onList,
+    onRotate,
+    onStart,
+    onFire,
+    onPlace,
+    onSetConfig,
+  }
   return { ...data, ...listeners, onHoverTile, onClickTile, onKick }
 }
