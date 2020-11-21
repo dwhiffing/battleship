@@ -54,9 +54,8 @@ export const useRoomState = ({ room, setRoom }) => {
 
   const onLeave = () => room.leave()
   const onKick = (player) => room.send('Leave', { playerId: player.id })
-  const onStart = () => {
-    room.send('Start', { config })
-  }
+  const onStart = () => room.send('Start', { config })
+  const onEnd = () => room.send('End')
   const onSetConfig = () => {
     const _size = prompt('Board Size?')
     const _ships = prompt('Ships?')
@@ -100,6 +99,7 @@ export const useRoomState = ({ room, setRoom }) => {
     onList,
     onRotate,
     onStart,
+    onEnd,
     onFire,
     onPlace,
     onSetConfig,

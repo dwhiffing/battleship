@@ -77,8 +77,8 @@ const EndActions = (props) => {
       <>
         <span>Game over! {winningPlayer.name} wins</span>
         {props.clientPlayer.isAdmin && (
-          <Action disabled={props.players.length < 2} onClick={props.onStart}>
-            Start
+          <Action disabled={props.players.length < 2} onClick={props.onEnd}>
+            Lobby
           </Action>
         )}
       </>
