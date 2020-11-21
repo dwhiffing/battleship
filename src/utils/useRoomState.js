@@ -73,7 +73,10 @@ export const useRoomState = ({ room, setRoom }) => {
   }
   const onList =
     data.phaseIndex > -1 ? () => data.setShowNames(!data.showNames) : null
-  const onFire = () => room.send('Fire', { index: data.placeIndex })
+  const onFire = () => {
+    room.send('Fire', { index: data.placeIndex })
+    clientPlayer.ammo > 1 && setPlaceIndex((p) => p + 1)
+  }
   const onRotate = () => setRotationIndex((i) => (i + 1) % 2)
   const onHoverTile = ({ tile }) => data.hoverTile(tile.index)
   const onPlace = () => {
