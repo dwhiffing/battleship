@@ -51,8 +51,8 @@ export const useRoomState = ({ room, setRoom }) => {
 
   const onLeave = () => room.leave()
   const onKick = (player) => room.send('Leave', { playerId: player.id })
-  const onStart = () => room.send('Start')
-  const onList = () => data.setShowNames(!data.showNames)
+  const onList =
+    data.phaseIndex > -1 ? () => data.setShowNames(!data.showNames) : null
   const onFire = () => room.send('Fire', { index: data.placeIndex })
   const onRotate = () => setRotationIndex((i) => (i + 1) % 2)
   const onHoverTile = ({ tile }) => data.hoverTile(tile.index)

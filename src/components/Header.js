@@ -14,7 +14,7 @@ export const Header = ({ onLeave, onList, phaseIndex }) => (
     </Flex>
 
     <Flex variant="justify-end" style={{ minWidth: 50 }}>
-      <Action onClick={onList}>List</Action>
+      {onList && <Action onClick={onList}>List</Action>}
     </Flex>
   </Flex>
 )
