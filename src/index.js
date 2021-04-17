@@ -20,5 +20,9 @@ function App() {
 ReactDOM.render(<App />, document.getElementById('root'))
 
 // TODO: add powerups to center square
-// TODO: indicate that player square is inactive because all their ships are sunk
-// TODO: config for num shots per round
+// TODO: highlight active player
+// Add hidden teams?
+// different colours
+// cursor should be border
+// TODO: lose remaining bullets on hit
+// make game realtime
