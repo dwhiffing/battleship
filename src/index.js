@@ -7,7 +7,7 @@ import './index.css'
 
 window.colyseus = new Client(
   process.env.NODE_ENV === 'production'
-    ? 'wss://daniel-battleship.herokuapp.com'
+    ? 'wss://web-production-b05a.up.railway.app'
     : 'ws://localhost:3553',
 )
 
